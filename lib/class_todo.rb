@@ -13,7 +13,6 @@ class Todo
     end
   
     def done?
-      fail "No task of that name" if @task == nil
       return @done
-    end
-  end
+    end   
+end

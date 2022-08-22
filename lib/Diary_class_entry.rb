@@ -3,6 +3,7 @@ class DiaryEntry
       @title = title
       @contents = contents
       @curr_pos = 0
+      @contacts = {}
     end
   
     def title
@@ -30,11 +31,19 @@ class DiaryEntry
         #binding.irb
         return chunk
     end
-      # Returns a string with a chunk of the contents that the user could read
+          # Returns a string with a chunk of the contents that the user could read
       # in the given number of minutes.
       # If called again, `reading_chunk` should return the next chunk, skipping
       # what has already been read, until the contents is fully read.
       # The next call after that it should restart from the beginning.
+
+    def add_contact(name, number)
+      @contacts.store(name, number)
+    end
+
+    def list_contacts
+      @contacts
+    end
 
   end
 

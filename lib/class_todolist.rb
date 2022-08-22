@@ -8,17 +8,11 @@ class TodoList
   end
 
   def incomplete
-    incomplete = []
-    @list.each {|item|
-     incomplete << item if !item.done?}
-     return incomplete
+    @list.each.select { |item| !item.done?}
   end
 
   def complete
-    complete = []
-    @list.each {|item|
-     complete << item if item.done?}
-     return complete
+    @list.each.select { |item| item.done?}
   end
 
   def give_up!

@@ -1,6 +1,7 @@
 class Diary
     def initialize
       @entries = []
+      @contacts = {}
     end
   
     def add(entry) # entry is an instance of DiaryEntry
@@ -35,5 +36,16 @@ class Diary
       sorted_entries.delete_if {|entry, length|
         length > words_read}
       return sorted_entries.reverse.first[0]
+    end
+
+    def update_contacts
+      @entries.each { |entry|
+        entry.list_contacts.each { |name, number|
+          @contacts.store(name, number) if !@contacts.include?(name)}
+        }
+    end
+
+    def contacts
+      @contacts
     end
   end

@@ -43,27 +43,116 @@ RSpec.describe "integration" do
     expect(monday.contacts).to eq "John" => "07733773773"
   end
 
-  it "adds 'adds todo tasks and skips repeat phone numbers in diary" do
-    monday = Todo.new
-    monday.add("walk dog")
-    monday.add("walk cat")
-    emotions = Diary.new
+  it "displays a list of phone numbers from diary entries" do
+    monday = Diary.new
     feelings = DiaryEntry.new("Sad", "My dog died today but I met the love of my life")
     feelings.add_contact("John", "07733773773")
-    feelings.add_contact("Mick", "08823773773")
-    feelings.add_contact("John", "07733773773")
-    enmotions.add(feelings)
-    emotions.update_contacts
-    expect(emotions.contacts).to eq "John" => "07733773773", "Mick" => "08823773773"
-    expect(monday.view_tasks).to eq "1, walk dog\n2, walk cat\n"
+    feelings.add_contact("Michael", "07743773773")
+    feelings.add_contact("Harry", "07739973773")
+    monday.add(feelings)
+    monday.update_contacts
+    expect(monday.contacts).to eq "John" => "07733773773", "Michael" => "07743773773", "Harry" => "07739973773"
   end
 
-  it "deletes 'walk dog' when given 1 as a parameter for complete method" do
-    monday = Todo.new
-    monday.add("walk dog")
-    monday.add("walk cat")
-    monday.complete(1)
-    expect(monday.view_tasks).to eq "1, walk cat\n"
+  it "displays a list of phone numbers from diary entries" do
+    monday = Diary.new
+    feelings = DiaryEntry.new("Sad", "My dog died today but I met the love of my life")
+    feelings.add_contact("John", "07733773773")
+    feelings.add_contact("Michael", "07743773773")
+    feelings.add_contact("Harry", "07739973773")
+    feelings.add_contact("Michael", "07743773773")
+    monday.add(feelings)
+    monday.update_contacts
+    expect(monday.contacts).to eq "John" => "07733773773", "Michael" => "07743773773", "Harry" => "07739973773"
   end
+
+  context "when we have a library of entries" do
+    it "returns all diary entries" do
+      janet = Diary.new
+      monday = DiaryEntry.new("Monday", "I went for a walk")
+      tuesday = DiaryEntry.new("Tuesday", "I had potatoes")
+      janet.add(monday)
+      janet.add(tuesday)
+      expect(janet.all).to eq [monday, tuesday]
+    end
+  end
+
+  it "gives contents" do
+    monday = DiaryEntry.new("Monday", "I went for a walk")
+    expect(monday.contents).to eq "I went for a walk"
+  end
+
+  it "gives us the closest diary entry in reading time to our parameters" do
+    janet = Diary.new
+    monday = DiaryEntry.new("Monday", "1 " * 100)
+    tuesday = DiaryEntry.new("Tuesday", "2 " * 150)
+    wednesday = DiaryEntry.new("Wednesday", "3 " * 250)
+    thursday = DiaryEntry.new("Thursday", "4 " * 200)
+    janet.add(monday)
+    janet.add(tuesday)
+    janet.add(wednesday)
+    janet.add(thursday)
+    expect(janet.find_best_entry_for_reading_time(19, 10)).to eq tuesday
+  end
+
+  it "adds a new todo to the list" do
+    homework = TodoList.new
+    monday = Todo.new("Mathematics")
+    homework.add(monday)
+  end
+
+  class TodoList
+  end
+
+  it "returns the tasks" do
+    task_1 = Todo.new("Walk the dog")
+    expect(task_1.task).to eq "Walk the dog"
+  end
+
+  it "lists complete items" do
+    homework = TodoList.new
+    monday = Todo.new("Mathematics")
+    homework.add(monday)
+    tuesday = Todo.new("English")
+    homework.add(tuesday)
+    tuesday.mark_done!
+    expect(homework.complete).to eq [tuesday]
+  end
+
+  it "lists incomplete items" do
+    homework = TodoList.new
+    monday = Todo.new("Mathematics")
+    homework.add(monday)
+    tuesday = Todo.new("English")
+    homework.add(tuesday)
+    monday.mark_done!
+    expect(homework.incomplete).to eq [tuesday]
+  end
+
+  it "displays a list of phone numbers from diary entries" do
+    monday = Diary.new
+    feelings = DiaryEntry.new("Sad", "My dog died today but I met the love of my life")
+    feelings.add_contact("John", "07733773773")
+    feelings.add_contact("Michael", "07743773773")
+    feelings.add_contact("Harry", "07739973773")
+    thoughts = DiaryEntry.new("question", "Why does my doctor hate me?")
+    thoughts.add_contact("Dr. Williams", "01644882566")
+    monday.add(thoughts)
+    monday.add(feelings)
+    monday.update_contacts
+    homework = TodoList.new
+    schoolwork = Todo.new("Mathematics")
+    homework.add(schoolwork)
+    tuesday = Todo.new("English")
+    homework.add(tuesday)
+    homework.give_up!
+    expect(homework.complete).to eq [schoolwork, tuesday]
+    expect(monday.contacts).to eq "John" => "07733773773", "Michael" => "07743773773", "Harry" => "07739973773", "Dr. Williams" => "01644882566"
+    expect(monday.find_best_entry_for_reading_time(3, 2)).to eq thoughts
+    expect(feelings.reading_chunk(2, 2)).to eq "My dog died today"
+    expect(feelings.reading_chunk(3, 1)).to eq "but I met"
+  end
+
+  
 end
 
